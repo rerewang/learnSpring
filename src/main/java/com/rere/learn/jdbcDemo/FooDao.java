@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
@@ -27,14 +26,8 @@ public class FooDao {
     @Autowired
     private SimpleJdbcInsert simpleJdbcInsert;
 
+    @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    public void createTable() {
-        jdbcTemplate.execute("create table foo (\n" +
-                "    \"id\" integer auto_increment,\n" +
-                "    \"bar\" varchar(20)\n" +
-                ")");
-    }
 
     public void insert() {
         String bar = "bar1";

@@ -58,10 +58,4 @@ public class JdbcDemoApplication {
         Connection conn = dataSource.getConnection();
         return conn.toString();
     }
-
-    @RequestMapping("/create_table")
-    public String create() {
-        fooDao.createTable();
-        return "created";
-    }
 }
