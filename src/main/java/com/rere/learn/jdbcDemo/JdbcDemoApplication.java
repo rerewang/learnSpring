@@ -41,6 +41,12 @@ public class JdbcDemoApplication {
         return "insert";
     }
 
+    @RequestMapping("/batchInsert")
+    public String batchInsert() {
+        fooDao.batchInsert();
+        return "batchInsert";
+    }
+
     @RequestMapping("/list")
     public String list() {
         fooDao.list();

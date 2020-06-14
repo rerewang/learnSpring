@@ -2,13 +2,19 @@ package com.rere.learn.jdbcDemo;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,6 +27,8 @@ public class FooDao {
     @Autowired
     private SimpleJdbcInsert simpleJdbcInsert;
 
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
     public void createTable() {
         jdbcTemplate.execute("create table foo (\n" +
                 "    \"id\" integer auto_increment,\n" +
@@ -29,8 +37,8 @@ public class FooDao {
     }
 
     public void insert() {
-//        String bar = "bar1";
-//        jdbcTemplate.update("insert into foo (bar) value (?)", bar);
+        String bar = "bar1";
+        jdbcTemplate.update("insert into foo (bar) value (?)", bar);
 
         HashMap<String, String> row = new HashMap<>();
         row.put("bar", "bar2");
@@ -59,5 +67,25 @@ public class FooDao {
             }
         });
         fooList.forEach(foo -> log.info("Foo is {}", foo));
+    }
+
+    public void batchInsert() {
+        jdbcTemplate.batchUpdate("insert into foo (bar) value (?)", new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
+                preparedStatement.setString(1, "bar" + i);
+            }
+
+            @Override
+            public int getBatchSize() {
+                return 2;
+            }
+        });
+
+        List<Foo> list = new ArrayList<>();
+        list.add(Foo.builder().id(100L).bar("bar100").build());
+        list.add(Foo.builder().id(101L).bar("bar101").build());
+        namedParameterJdbcTemplate.batchUpdate("insert into foo (id, bar) value (:id, :bar)",
+                SqlParameterSourceUtils.createBatch(list));
     }
 }
