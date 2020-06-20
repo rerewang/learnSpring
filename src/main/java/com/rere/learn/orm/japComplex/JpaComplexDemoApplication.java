@@ -1,9 +1,10 @@
-package com.rere.learn.orm.jpa;
+package com.rere.learn.orm.japComplex;
 
-import com.rere.learn.orm.jpa.model.Coffee;
-import com.rere.learn.orm.jpa.model.CoffeeOrder;
-import com.rere.learn.orm.jpa.repository.CoffeeOrderRepository;
-import com.rere.learn.orm.jpa.repository.CoffeeRepository;
+import com.rere.learn.orm.japComplex.model.OrderState;
+import com.rere.learn.orm.japComplex.repository.CoffeeOrderRepository;
+import com.rere.learn.orm.japComplex.repository.CoffeeRepository;
+import com.rere.learn.orm.japComplex.model.Coffee;
+import com.rere.learn.orm.japComplex.model.CoffeeOrder;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
@@ -12,27 +13,33 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootApplication
 @EnableJpaRepositories
+@EnableTransactionManagement
 @Slf4j
-public class JpaDemoApplication implements ApplicationRunner {
+public class JpaComplexDemoApplication implements ApplicationRunner {
     @Autowired
     private CoffeeOrderRepository coffeeOrderRepository;
     @Autowired
     private CoffeeRepository coffeeRepository;
 
     public static void main(String[] args) {
-        SpringApplication.run(JpaDemoApplication.class, args);
+        SpringApplication.run(JpaComplexDemoApplication.class, args);
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         initOrders();
+        findOrders();
     }
 
     public void initOrders() {
@@ -51,7 +58,7 @@ public class JpaDemoApplication implements ApplicationRunner {
         CoffeeOrder order = CoffeeOrder.builder()
                 .customer("Rere Wang")
                 .items(Collections.singletonList(espresso))
-                .state(0)
+                .state(OrderState.INIT)
                 .build();
         coffeeOrderRepository.save(order);
         log.info("Order: {}", order);
@@ -59,9 +66,33 @@ public class JpaDemoApplication implements ApplicationRunner {
         order = CoffeeOrder.builder()
                 .customer("Rere Wang")
                 .items(Arrays.asList(espresso, latte))
-                .state(0)
+                .state(OrderState.INIT)
                 .build();
         coffeeOrderRepository.save(order);
         log.info("Order: {}", order);
+    }
+
+    public void findOrders() {
+        coffeeRepository.findAll(Sort.by(Sort.Direction.DESC, "id"))
+                .forEach(c -> log.info("Loading {}", c));
+
+        List<CoffeeOrder> list = coffeeOrderRepository.findTop3ByOrderByUpdateTimeDescIdAsc();
+        log.info("findTop3ByOrderByUpdateTimeDescIdAsc: {}", getJoinedOrderId(list));
+
+        list = coffeeOrderRepository.findByCustomerOrderById("Rere Wang");
+        log.info("findByCustomerOrderById: {}", getJoinedOrderId(list));
+
+        list.forEach(o -> {
+            log.info("Order {}", o.getId());
+            o.getItems().forEach(i -> log.info("  Item {}", i));
+        });
+
+        list = coffeeOrderRepository.findByItems_Name("latte");
+        log.info("findByItems_Name: {}", getJoinedOrderId(list));
+    }
+
+    private String getJoinedOrderId(List<CoffeeOrder> list) {
+        return list.stream().map(o -> o.getId().toString())
+                .collect(Collectors.joining(","));
     }
 }
