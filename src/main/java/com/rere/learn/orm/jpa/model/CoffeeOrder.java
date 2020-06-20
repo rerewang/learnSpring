@@ -5,32 +5,38 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "t_order")
+@Table(name = "T_ORDER")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CoffeeOrder implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
     private String customer;
     @ManyToMany
-    @JoinTable(name = "t_order_coffe")
+    @JoinTable(name = "t_order_coffee")
     private List<Coffee> items;
     @Column(nullable = false)
     private Integer state;
     @Column(updatable = false)
     @CreationTimestamp
     private Date createTime;
-    @Column
-    @CreationTimestamp
+    @UpdateTimestamp
     private Date updateTime;
 }
