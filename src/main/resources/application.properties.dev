@@ -4,6 +4,13 @@ spring.datasource.url=jdbc:mysql://host/database?serverTimezone=PST
 spring.datasource.username=username
 spring.datasource.password=password
 
-spring.jpa.hibernate.ddl-auto=create-drop
-spring.jpa.properties.hibernate.show_sql=true
-spring.jpa.properties.hibernate.format_sql=true
+#JPA
+#spring.jpa.hibernate.ddl-auto=create-drop
+#spring.jpa.properties.hibernate.show_sql=true
+#spring.jpa.properties.hibernate.format_sql=true
+
+#MyBatis
+## 转换器包
+mybatis.type-handlers-package=com.rere.learn.orm.mybatis.handler
+## 驼峰命名
+mybatis.configuration.map-underscore-to-camel-case=true
