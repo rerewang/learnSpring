@@ -14,3 +14,6 @@ spring.datasource.password=password
 mybatis.type-handlers-package=com.rere.learn.orm.mybatis.handler
 ## 驼峰命名
 mybatis.configuration.map-underscore-to-camel-case=true
+
+#mongo
+spring.data.mongodb.uri=mongodb://springbucks:springbucks@localhost:27017/springbucks
