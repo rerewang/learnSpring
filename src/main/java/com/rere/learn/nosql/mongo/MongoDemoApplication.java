@@ -21,6 +21,5 @@ public class MongoDemoApplication implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Coffee coffee = Coffee.builder().build();
     }
 }
