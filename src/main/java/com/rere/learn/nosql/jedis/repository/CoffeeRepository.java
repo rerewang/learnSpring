@@ -1,7 +1,7 @@
 package com.rere.learn.nosql.jedis.repository;
 
 import com.rere.learn.nosql.jedis.model.Coffee;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CoffeeRepository extends CrudRepository<Coffee, Long> {
+public interface CoffeeRepository extends JpaRepository<Coffee, Long> {
 }

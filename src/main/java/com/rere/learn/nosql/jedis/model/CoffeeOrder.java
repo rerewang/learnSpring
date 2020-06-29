@@ -27,7 +27,7 @@ public class CoffeeOrder implements Serializable {
     @JoinTable(name = "t_order_coffee")
     private List<Coffee> items;
     @Column(nullable = false)
-    private Integer state;
+    private OrderState state;
     @Column(updatable = false)
     @CreationTimestamp
     private Date createTime;
