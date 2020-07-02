@@ -13,6 +13,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -25,6 +26,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class CacheDemoApplication implements ApplicationRunner {
     @Autowired
     private CoffeeService coffeeService;
+    @Autowired
+    private CacheManager cacheManager;
 
     public static void main(String[] args) {
         SpringApplication.run(CacheDemoApplication.class, args);
@@ -32,6 +35,8 @@ public class CacheDemoApplication implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        log.info("Cache in use: {}", cacheManager.toString());
+
         initCoffees();
 
         log.info("Count: {}", coffeeService.findAllCoffee().size());
